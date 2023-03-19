@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>长列表优化</title>
+    <style>
+        .scroll-container {
+            width: 500px;
+            /* 滚动容器设置固定高度 */
+            height: 500px;
+            border-style: solid;
+            overflow: auto;
+            margin: auto;
+        }
+        .list-container {
+            /* 列表容器设置相对定位 */
+            position: relative;
+        }
+        .list-item {
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            background-color: gray;
+            /* 列表项设置绝对定位 */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .list-item:nth-child(even) {
+            background-color: lightgray;
+        }
+    </style>
+</head>
+<body>
+    <div id="scroll-container" class="scroll-container">
+        <div id="list-container" class="list-container"></div>
+    </div>
+    <script>
+        const listLength = 100000;  // 列表项总数
+        const itemHeight = 50;  // 每一个列表项的高度
+        const preRender = 10;  // 预渲染数量
+        const scrollContainer = document.getElementById('scroll-container');
+        const { clientHeight } = scrollContainer;
+        const listContainer = document.getElementById('list-container');
+        listContainer.style.height = `${itemHeight * listLength}px`;  // 设置列表容器高度
+
+        // 渲染列表项
+        const render = () => {
+            const [startIndex, endIndex] = getIndexInterval();
+            const documentFragment = document.createDocumentFragment();
+            for (let i = startIndex; i < endIndex; i++) {
+                const item = document.createElement('div');
+                item.innerText = `第${i + 1}条数据`;
+                item.className = 'list-item';
+                item.style.transform = `translateY(${itemHeight * i}px)`;
+                documentFragment.appendChild(item);
+            }
+            listContainer.innerHTML = '';
+            listContainer.appendChild(documentFragment);
+        };
+
+        // 获取当前需要渲染列表项的索引区间
+        const getIndexInterval = () => {
+            const { scrollTop } = scrollContainer;
+            let startIndex = Math.floor(scrollTop / itemHeight);  // 起始索引
+            let endIndex = Math.ceil((scrollTop + clientHeight) / itemHeight);  // 结束索引
+            startIndex -= preRender;
+            endIndex += preRender;
+            if (startIndex < 0) startIndex = 0;
+            if (endIndex > listLength) endIndex = listLength;
+            return [startIndex, endIndex];
+        };
+
+        render();
+        scrollContainer.addEventListener('scroll', render);
+    </script>
+</body>
+</html>
