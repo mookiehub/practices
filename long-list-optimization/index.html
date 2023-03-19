@@ -55,7 +55,7 @@
                 const item = document.createElement('div');
                 item.innerText = `第${i + 1}条数据`;
                 item.className = 'list-item';
-                item.style.transform = `translateY(${itemHeight * i}px)`;
+                item.style.transform = `translateY(${itemHeight * i}px)`;  // 设置列表项在Y轴方向的偏移量
                 documentFragment.appendChild(item);
             }
             listContainer.innerHTML = '';
