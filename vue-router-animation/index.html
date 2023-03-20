@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 路由动画</title>
+    <style>
+        body {
+            overflow: hidden;
+            margin: 0;
+        }
+        a {
+            text-decoration: none;
+        }
+        .navigation-container {
+            height: 50px;
+            font-weight: bold;
+            line-height: 50px;
+            text-align: center;
+            background-color: black;
+        }
+        .navigation-item {
+            color: gray;
+            margin: 0 20px;
+        }
+        .navigation-item.router-link-active {
+            color: white;
+            text-decoration: underline;
+        }
+        .view-container {
+            font-size: 32px;
+            line-height: 64px;
+            text-align: center;
+            position: relative;
+        }
+        .view-item {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* 路由过渡 */
+        .ltr-enter-active,
+        .ltr-leave-active,
+        .rtl-enter-active,
+        .rtl-leave-active {
+            transition-duration: 1s;
+        }
+        .ltr-enter {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        .ltr-leave-to {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        .rtl-enter {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        .rtl-leave-to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="navigation-container">
+            <router-link
+                class="navigation-item"
+                v-for="item in routes"
+                :key="item.path"
+                :to="item.path"
+            >{{ item.title }}</router-link>
+        </div>
+        <div class="view-container">
+            <!-- 根据路由切换方向使用相应的过渡 -->
+            <transition :name="store.state.routerDirection">
+                <router-view></router-view>
+            </transition>
+        </div>
+    </div>
+    <script src="vue@2.6.14.js"></script>
+    <script src="vue-router@3.6.5.js"></script>
+    <script>
+        const Home = {
+            template: `
+                <div class="view-item">首页</div>
+            `
+        };
+        const About = {
+            template: `
+                <div class="view-item">关于页面</div>
+            `
+        };
+        const Settings = {
+            template: `
+                <div class="view-item">设置页面</div>
+            `
+        };
+
+        // 存储和设置路由切换方向
+        const store = {
+            state: {
+                routerDirection: 'ltr'
+            },
+            changeRouterDirection(direction) {
+                this.state.routerDirection = direction;
+            }
+        };
+
+        // 定义路由
+        const routes = [
+            { path: '/home', title: '首页', component: Home },
+            { path: '/about', title: '关于', component: About },
+            { path: '/settings', title: '设置', component: Settings }
+        ];
+        const router = new VueRouter({ routes });
+        // 在全局前置守卫中判断路由切换方向
+        router.beforeEach((to, from ,next) => {
+            const toIndex = routes.findIndex(item => item.path === to.path);
+            const fromIndex = routes.findIndex(item => item.path === from.path);
+            let direction = '';
+            if (toIndex < fromIndex) {
+                direction = 'rtl';
+            } else {
+                direction = 'ltr';
+            }
+            store.changeRouterDirection(direction);
+            next();
+        });
+
+        new Vue({
+            data: {
+                routes,
+                store
+            },
+            router
+        }).$mount('#app');
+    </script>
+</body>
+</html>
