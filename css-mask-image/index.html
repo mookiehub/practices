@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 元素蒙版</title>
+    <style>
+        .container {
+            max-width: 1000px;
+            display: flex;
+            justify-content: space-between;
+            margin: 0 auto;
+        }
+        .container div {
+            padding: 10px;
+            flex: 1;
+        }
+        .container .img-container {
+            height: 0;
+            text-align: center;
+            background: url(windows11-wallpaper.jpg) no-repeat center;
+            background-size: cover;
+            padding-bottom: calc(100% - 10px);
+            border-radius: 50%;
+        }
+        .container h4 {
+            text-align: center;
+        }
+        .masked .img-container {
+            /* 利用锥形渐变设置蒙版 */
+            -webkit-mask-image: conic-gradient(
+                white 0deg, white 30deg,
+                transparent 40deg, transparent 60deg,
+                white 60deg, white 90deg,
+                transparent 100deg, transparent 120deg,
+                white 120deg, white 150deg,
+                transparent 160deg, transparent 180deg,
+                white 180deg, white 210deg,
+                transparent 220deg, transparent 240deg,
+                white 240deg, white 270deg,
+                transparent 280deg, transparent 300deg,
+                white 300deg, white 330deg,
+                transparent 340deg, transparent 360deg
+            );
+            mask-image: conic-gradient(
+                white 0deg, white 30deg,
+                transparent 40deg, transparent 60deg,
+                white 60deg, white 90deg,
+                transparent 100deg, transparent 120deg,
+                white 120deg, white 150deg,
+                transparent 160deg, transparent 180deg,
+                white 180deg, white 210deg,
+                transparent 220deg, transparent 240deg,
+                white 240deg, white 270deg,
+                transparent 280deg, transparent 300deg,
+                white 300deg, white 330deg,
+                transparent 340deg, transparent 360deg
+            );
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="original">
+            <div class="img-container"></div>
+            <h4>初始效果</h4>
+        </div>
+        <div class="masked">
+            <div class="img-container"></div>
+            <h4>蒙版效果</h4>
+        </div>
+    </div>
+</body>
+</html>
